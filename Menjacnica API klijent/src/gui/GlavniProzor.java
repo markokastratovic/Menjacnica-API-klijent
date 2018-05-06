@@ -22,6 +22,8 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Map;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GlavniProzor extends JFrame {
 
@@ -35,7 +37,7 @@ public class GlavniProzor extends JFrame {
 	private JTextField txtIznosiz;
 	private JTextField txtIznosu;
 	private JButton btnKonvertuj;
-
+	LinkedList<Valuta>valute;
 	/**
 	 * Launch the application.
 	 */
@@ -68,7 +70,7 @@ public class GlavniProzor extends JFrame {
 					JsonObject contentJson = gson.fromJson(content, JsonObject.class);
 					JsonObject resultsJson = contentJson.get("results").getAsJsonObject();
 					
-					LinkedList<Valuta>valute=new LinkedList<Valuta>();
+					valute=new LinkedList<Valuta>();
 					
 					 for (Map.Entry<String,JsonElement> entry : resultsJson.entrySet()) {
 						 Valuta v=gson.fromJson(entry.getValue().getAsJsonObject(), Valuta.class);
@@ -170,6 +172,42 @@ public class GlavniProzor extends JFrame {
 	private JButton getBtnKonvertuj() {
 		if (btnKonvertuj == null) {
 			btnKonvertuj = new JButton("Konvertuj");
+			btnKonvertuj.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					int index1=comboBox.getSelectedIndex();
+					String skraceni1=valute.get(index1).getCurrencyId();
+					int index2=comboBox_1.getSelectedIndex();
+					String skraceni2=valute.get(index2).getCurrencyId();
+					String url="http://free.currencyconverterapi.com/api/v3/convert?q="+skraceni1+"_"+skraceni2;
+					String content;
+					try {
+						content = util.URLConnectionUtil.getContent(url);
+						Gson gson = new GsonBuilder().create();				
+						JsonObject contentJson = gson.fromJson(content, JsonObject.class);
+						JsonObject resultsJson = contentJson.get("results").getAsJsonObject();
+						JsonObject queryJson = contentJson.get("query").getAsJsonObject();
+						int count=queryJson.get("count").getAsInt();
+						System.out.println(resultsJson);
+//						System.out.println(queryJson);
+//						System.out.println(count);
+						if (count!=0) {
+						JsonObject konverzijaJson=resultsJson.get(skraceni1+"_"+skraceni2).getAsJsonObject();					
+							double kurs=konverzijaJson.get("val").getAsDouble();
+							System.out.println(kurs);
+						}else {
+							throw new RuntimeException("GRESKA-Kurs nije pronadjen");
+						}
+						
+						
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
+				}
+			});
 			btnKonvertuj.setBounds(167, 210, 89, 23);
 		}
 		return btnKonvertuj;
