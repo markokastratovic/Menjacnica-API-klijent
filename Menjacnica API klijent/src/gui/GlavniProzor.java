@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -19,7 +20,11 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 import java.awt.event.ActionListener;
@@ -194,6 +199,33 @@ public class GlavniProzor extends JFrame {
 						JsonObject konverzijaJson=resultsJson.get(skraceni1+"_"+skraceni2).getAsJsonObject();					
 							double kurs=konverzijaJson.get("val").getAsDouble();
 							System.out.println(kurs);
+							if (txtIznosiz.getText()!=null) {
+								double iznos=Integer.parseInt(txtIznosiz.getText());
+								iznos=iznos*kurs;
+								txtIznosu.setText(String.valueOf(iznos));
+							}
+
+							Date datum = new Date();
+							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSSSSS");
+							String datumS = format.format(datum);
+							
+							gson=new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+							JsonObject obj=new JsonObject();
+							obj.addProperty("datumVreme",datumS);
+							obj.addProperty("izValute", skraceni1);
+							obj.addProperty("uValutu", skraceni2);
+							obj.addProperty("kurs", kurs);
+							
+							JsonArray log=null;
+							FileReader reader = new FileReader("data/log.json");
+							log = gson.fromJson(reader, JsonArray.class);
+							FileWriter writer = new FileWriter("data/log.json");
+							if(log==null)log=new JsonArray();
+	
+							log.add(obj);
+							writer.write(gson.toJson(log));
+							writer.close();
+							
 						}else {
 							throw new RuntimeException("GRESKA-Kurs nije pronadjen");
 						}
@@ -201,7 +233,7 @@ public class GlavniProzor extends JFrame {
 						
 						
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+					
 						e.printStackTrace();
 					}
 					
