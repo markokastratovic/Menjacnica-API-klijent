@@ -46,10 +46,7 @@ public class GlavniProzor extends JFrame {
 					 comboBox.addItem(GUIKontroler.m.valute.get(i).getName());
 					 comboBox_1.addItem(GUIKontroler.m.valute.get(i).getName());    
 					}
-					 
-//					System.out.println(valute.getLast().getCurrencyName());
-//					System.out.println(valute.size());		
-//					System.out.println(resultsJson);				
+					 			
 				} catch (IOException e) {
 					e.printStackTrace();
 				}		
@@ -150,8 +147,7 @@ public class GlavniProzor extends JFrame {
 						}			
 					} catch (Exception e) {					
 						e.printStackTrace();
-					}
-					
+					}				
 			
 				}
 			});
