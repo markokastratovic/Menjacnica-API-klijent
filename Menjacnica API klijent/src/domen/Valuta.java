@@ -1,4 +1,4 @@
-package main;
+package domen;
 
 public class Valuta {
 	private String alpha3;

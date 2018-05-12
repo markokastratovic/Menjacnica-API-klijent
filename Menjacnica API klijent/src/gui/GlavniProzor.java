@@ -1,18 +1,10 @@
 package gui;
 
-import java.awt.EventQueue;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import main.Valuta;
 
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
@@ -20,13 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Map;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -42,22 +28,7 @@ public class GlavniProzor extends JFrame {
 	private JTextField txtIznosiz;
 	private JTextField txtIznosu;
 	private JButton btnKonvertuj;
-	LinkedList<Valuta>valute;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GlavniProzor frame = new GlavniProzor();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 
 	/**
 	 * Create the frame.
@@ -68,35 +39,21 @@ public class GlavniProzor extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
-				String url= "http://free.currencyconverterapi.com/api/v3/countries";
-				try {
-					String content = util.URLConnectionUtil.getContent(url);
-					Gson gson = new GsonBuilder().create();				
-					JsonObject contentJson = gson.fromJson(content, JsonObject.class);
-					JsonObject resultsJson = contentJson.get("results").getAsJsonObject();
-					
-					valute=new LinkedList<Valuta>();
-					
-					 for (Map.Entry<String,JsonElement> entry : resultsJson.entrySet()) {
-						 Valuta v=gson.fromJson(entry.getValue().getAsJsonObject(), Valuta.class);
-					     valute.add(v);
+				
+				try {		
+					GUIKontroler.m.vratiValute();
+					for(int i=0;i<GUIKontroler.m.valute.size();i++) {
+					 comboBox.addItem(GUIKontroler.m.valute.get(i).getName());
+					 comboBox_1.addItem(GUIKontroler.m.valute.get(i).getName());    
+					}
 					 
-					 comboBox.addItem(v.getName());
-					 comboBox_1.addItem(v.getName());    
-					 }
 //					System.out.println(valute.getLast().getCurrencyName());
 //					System.out.println(valute.size());		
-//					System.out.println(resultsJson);
-					
+//					System.out.println(resultsJson);				
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
-				
-				
-				
-				System.out.println("Prozor otvoren");
-				
-				
+				}		
+				System.out.println("Prozor otvoren");			
 				
 			}
 		});
@@ -179,69 +136,28 @@ public class GlavniProzor extends JFrame {
 			btnKonvertuj = new JButton("Konvertuj");
 			btnKonvertuj.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					int index1=comboBox.getSelectedIndex();
-					String skraceni1=valute.get(index1).getCurrencyId();
-					int index2=comboBox_1.getSelectedIndex();
-					String skraceni2=valute.get(index2).getCurrencyId();
-					String url="http://free.currencyconverterapi.com/api/v3/convert?q="+skraceni1+"_"+skraceni2;
-					String content;
+					int indeks1=comboBox.getSelectedIndex();					
+					int indeks2=comboBox_1.getSelectedIndex();														
 					try {
-						content = util.URLConnectionUtil.getContent(url);
-						Gson gson = new GsonBuilder().create();				
-						JsonObject contentJson = gson.fromJson(content, JsonObject.class);
-						JsonObject resultsJson = contentJson.get("results").getAsJsonObject();
-						JsonObject queryJson = contentJson.get("query").getAsJsonObject();
-						int count=queryJson.get("count").getAsInt();
-						System.out.println(resultsJson);
-//						System.out.println(queryJson);
-//						System.out.println(count);
-						if (count!=0) {
-						JsonObject konverzijaJson=resultsJson.get(skraceni1+"_"+skraceni2).getAsJsonObject();					
-							double kurs=konverzijaJson.get("val").getAsDouble();
-							System.out.println(kurs);
 							if (txtIznosiz.getText()!=null) {
 								double iznos=Integer.parseInt(txtIznosiz.getText());
+								double kurs=GUIKontroler.m.vratiKonverziju(indeks1, indeks2);
 								iznos=iznos*kurs;
 								txtIznosu.setText(String.valueOf(iznos));
-							}
-
-							Date datum = new Date();
-							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSSSSS");
-							String datumS = format.format(datum);
-							
-							gson=new GsonBuilder().setPrettyPrinting().serializeNulls().create();
-							JsonObject obj=new JsonObject();
-							obj.addProperty("datumVreme",datumS);
-							obj.addProperty("izValute", skraceni1);
-							obj.addProperty("uValutu", skraceni2);
-							obj.addProperty("kurs", kurs);
-							
-							JsonArray log=null;
-							FileReader reader = new FileReader("data/log.json");
-							log = gson.fromJson(reader, JsonArray.class);
-							FileWriter writer = new FileWriter("data/log.json");
-							if(log==null)log=new JsonArray();
-	
-							log.add(obj);
-							writer.write(gson.toJson(log));
-							writer.close();
-							
+								GUIKontroler.m.SacuvajKonverziju(indeks1, indeks2,kurs);												
 						}else {
 							throw new RuntimeException("GRESKA-Kurs nije pronadjen");
-						}
-						
-						
-						
-					} catch (IOException e) {
-					
+						}			
+					} catch (Exception e) {					
 						e.printStackTrace();
 					}
 					
-					
+			
 				}
 			});
 			btnKonvertuj.setBounds(167, 210, 89, 23);
 		}
 		return btnKonvertuj;
 	}
+
 }
