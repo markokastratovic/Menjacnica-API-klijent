@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -137,18 +138,17 @@ public class GlavniProzor extends JFrame {
 					int indeks2=comboBox_1.getSelectedIndex();														
 					try {
 							if (txtIznosiz.getText()!=null) {
-								double iznos=Integer.parseInt(txtIznosiz.getText());
+								double iznos=Double.parseDouble(txtIznosiz.getText());
 								double kurs=GUIKontroler.m.vratiKonverziju(indeks1, indeks2);
 								iznos=iznos*kurs;
 								txtIznosu.setText(String.valueOf(iznos));
 								GUIKontroler.m.SacuvajKonverziju(indeks1, indeks2,kurs);												
-						}else {
-							throw new RuntimeException("GRESKA-Kurs nije pronadjen");
-						}			
-					} catch (Exception e) {					
-						e.printStackTrace();
-					}				
-			
+						}		
+					} catch (NumberFormatException e) {					
+						JOptionPane.showMessageDialog(contentPane, "Greska pri unosu!"+"\nMorate uneti realan broj",
+								"Greska", JOptionPane.ERROR_MESSAGE);						
+					}
+							
 				}
 			});
 			btnKonvertuj.setBounds(167, 210, 89, 23);

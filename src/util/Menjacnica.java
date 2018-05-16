@@ -69,7 +69,7 @@ public class Menjacnica {
 		String skraceni2=valute.get(indeksU).getCurrencyId();
 		Gson gson = new GsonBuilder().create();		
 		Date datum = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSSSSS");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 		String datumS = format.format(datum);
 		
 		gson=new GsonBuilder().setPrettyPrinting().serializeNulls().create();

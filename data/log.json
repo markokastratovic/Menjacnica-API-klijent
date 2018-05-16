@@ -28,5 +28,47 @@
     "izValute": "EUR",
     "uValutu": "RSD",
     "kurs": 118.214376
+  },
+  {
+    "datumVreme": "2018-05-16 17:05:07.000998",
+    "izValute": "BRL",
+    "uValutu": "AFN",
+    "kurs": 19.250088
+  },
+  {
+    "datumVreme": "2018-05-16 17:13:27.000008",
+    "izValute": "AFN",
+    "uValutu": "AFN",
+    "kurs": 1.0
+  },
+  {
+    "datumVreme": "2018-05-16 17:15:37.000302",
+    "izValute": "BDT",
+    "uValutu": "AFN",
+    "kurs": 0.851568
+  },
+  {
+    "datumVreme": "2018-05-16 17:19:59.000151",
+    "izValute": "BDT",
+    "uValutu": "AFN",
+    "kurs": 0.851568
+  },
+  {
+    "datumVreme": "2018-05-16 17:21:14.000176",
+    "izValute": "XAF",
+    "uValutu": "EUR",
+    "kurs": 0.001526
+  },
+  {
+    "datumVreme": "2018-05-16 17:22:49.000388",
+    "izValute": "AFN",
+    "uValutu": "AFN",
+    "kurs": 1.0
+  },
+  {
+    "datumVreme": "2018-05-16 17:22:55.000896",
+    "izValute": "AFN",
+    "uValutu": "AFN",
+    "kurs": 1.0
   }
 ]
